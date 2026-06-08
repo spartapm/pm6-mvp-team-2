@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
+import BrandLogo from "@/components/BrandLogo";
 import {
   currentUser,
   getProject,
@@ -38,12 +39,12 @@ export default function ProjectShell({
     (async () => {
       const u = await currentUser();
       if (!u) {
-        router.replace("/");
+        router.replace("/login");
         return;
       }
       const p = await getProject(projectId);
       if (!p || p.ownerEmail !== u.email) {
-        router.replace("/");
+        router.replace("/login");
         return;
       }
       setUser(u);
@@ -72,20 +73,71 @@ export default function ProjectShell({
 
   const handleLogout = () => {
     logout();
-    router.replace("/");
+    router.replace("/login");
   };
 
   return (
     <div className="flex min-h-screen flex-col bg-canvas">
       {/* 헤더 (고정) */}
-      <header className="sticky top-0 z-30 flex h-14 items-center justify-between border-b border-line bg-white px-6">
-        <Link
-          href={`/project/${project.id}/dashboard`}
-          className="text-base font-bold text-ink transition-colors hover:text-brand"
-          title="홈(대시보드)으로"
-        >
-          인수인계 태스크 관리
-        </Link>
+      <header className="sticky top-0 z-30 grid h-14 grid-cols-[minmax(220px,360px)_1fr_auto] items-center border-b border-line bg-white px-6">
+        <div className="relative">
+          <button
+            type="button"
+            onClick={() => setDropdownOpen((v) => !v)}
+            className="flex w-full items-center justify-between rounded-lg border border-line px-3 py-2 text-sm font-semibold text-ink hover:bg-canvas"
+          >
+            <span className="truncate">{project.name}</span>
+            <span className="ml-2 text-ink-faint">{dropdownOpen ? "▲" : "▼"}</span>
+          </button>
+
+          {dropdownOpen && (
+            <div className="absolute left-0 right-0 z-40 mt-1 animate-fade-in rounded-xl border border-line bg-white p-2 shadow-pop">
+              {projects.map((p) => (
+                <button
+                  key={p.id}
+                  type="button"
+                  onClick={() => {
+                    setDropdownOpen(false);
+                    handleSwitchProject(p.id);
+                  }}
+                  className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm ${
+                    p.id === project.id
+                      ? "bg-brand-soft font-semibold text-brand"
+                      : "text-ink-soft hover:bg-canvas"
+                  }`}
+                >
+                  <span className="truncate">{p.name}</span>
+                  {p.id !== project.id && <span className="text-ink-faint">→</span>}
+                </button>
+              ))}
+              <div className="my-1 border-t border-line" />
+              <button
+                type="button"
+                onClick={() => {
+                  setDropdownOpen(false);
+                  handleSwitchProject("new");
+                }}
+                className="w-full rounded-lg px-3 py-2 text-left text-sm text-ink-soft hover:bg-canvas"
+              >
+                + 새 프로젝트
+              </button>
+              <Link
+                href={`/project/${project.id}/settings`}
+                onClick={() => setDropdownOpen(false)}
+                className="mt-1 block rounded-lg bg-ink px-3 py-2 text-center text-sm font-semibold text-white hover:opacity-90"
+              >
+                설정
+              </Link>
+            </div>
+          )}
+        </div>
+
+        <div className="flex justify-center">
+          <Link href={`/project/${project.id}/dashboard`} title="홈(대시보드)으로">
+            <BrandLogo />
+          </Link>
+        </div>
+
         <button
           onClick={handleLogout}
           className="text-sm font-medium text-ink-faint hover:text-ink"
@@ -97,64 +149,7 @@ export default function ProjectShell({
       <div className="flex flex-1">
         {/* 네비 (고정) */}
         <aside className="sticky top-14 flex h-[calc(100vh-3.5rem)] w-60 flex-col border-r border-line bg-white">
-          <div className="relative p-4">
-            {/* 프로젝트 선택 드롭다운 */}
-            <button
-              type="button"
-              onClick={() => setDropdownOpen((v) => !v)}
-              className="flex w-full items-center justify-between rounded-lg border border-line px-3 py-2 text-sm font-semibold text-ink hover:bg-canvas"
-            >
-              <span className="truncate">{project.name}</span>
-              <span className="ml-2 text-ink-faint">
-                {dropdownOpen ? "▲" : "▼"}
-              </span>
-            </button>
-
-            {dropdownOpen && (
-              <div className="absolute left-4 right-4 z-20 mt-1 animate-fade-in rounded-xl border border-line bg-white p-2 shadow-pop">
-                {projects.map((p) => (
-                  <button
-                    key={p.id}
-                    type="button"
-                    onClick={() => {
-                      setDropdownOpen(false);
-                      handleSwitchProject(p.id);
-                    }}
-                    className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm ${
-                      p.id === project.id
-                        ? "bg-brand-soft font-semibold text-brand"
-                        : "text-ink-soft hover:bg-canvas"
-                    }`}
-                  >
-                    <span className="truncate">{p.name}</span>
-                    {p.id !== project.id && (
-                      <span className="text-ink-faint">→</span>
-                    )}
-                  </button>
-                ))}
-                <div className="my-1 border-t border-line" />
-                <button
-                  type="button"
-                  onClick={() => {
-                    setDropdownOpen(false);
-                    handleSwitchProject("new");
-                  }}
-                  className="w-full rounded-lg px-3 py-2 text-left text-sm text-ink-soft hover:bg-canvas"
-                >
-                  + 새 프로젝트
-                </button>
-                <Link
-                  href={`/project/${project.id}/settings`}
-                  onClick={() => setDropdownOpen(false)}
-                  className="mt-1 block rounded-lg bg-ink px-3 py-2 text-center text-sm font-semibold text-white hover:opacity-90"
-                >
-                  설정
-                </Link>
-              </div>
-            )}
-          </div>
-
-          <nav className="flex-1 px-3">
+          <nav className="flex-1 px-3 pt-3">
             {NAV.map((item) => {
               const isActive = item.key === activeKey;
               const href = `/project/${project.id}/${item.key}`;

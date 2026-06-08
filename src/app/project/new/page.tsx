@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
+import BrandLogo from "@/components/BrandLogo";
 import Modal from "@/components/Modal";
 import { createProject, currentUser, getProjects } from "@/lib/store";
 import type { Handover, Project } from "@/lib/types";
@@ -19,7 +19,7 @@ export default function NewProjectPage() {
     (async () => {
       const u = await currentUser();
       if (!u) {
-        router.replace("/");
+        router.replace("/login");
         return;
       }
       setUser(u);
@@ -27,10 +27,6 @@ export default function NewProjectPage() {
       setProjects(await getProjects(u.email));
     })();
   }, [router]);
-
-  // 기존 프로젝트가 있으면 홈(첫 프로젝트)으로 돌아갈 수 있음
-  const homeHref =
-    projects.length > 0 ? `/project/${projects[0].id}/dashboard` : null;
 
   const handleCreate = async () => {
     if (!user) return;
@@ -57,25 +53,21 @@ export default function NewProjectPage() {
   return (
     <div className="flex min-h-screen flex-col">
       <header className="flex h-14 items-center justify-between border-b border-line bg-white px-6 text-sm font-semibold text-ink-soft">
-        {homeHref ? (
-          <Link href={homeHref} className="text-ink hover:text-brand">
-            인수인계 태스크 관리
-          </Link>
-        ) : (
-          <span className="text-ink">인수인계 태스크 관리</span>
-        )}
+        <div className="w-24" />
+        <BrandLogo />
         {user && <span className="text-ink-faint">{user.name} 님</span>}
       </header>
 
       <main className="flex flex-1 items-center justify-center px-4">
         <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-card">
-          {homeHref && (
-            <Link
-              href={homeHref}
+          {projects.length > 0 && (
+            <button
+              type="button"
+              onClick={() => router.back()}
               className="mb-4 inline-flex items-center gap-1 text-sm font-medium text-ink-faint hover:text-ink"
             >
               ← 뒤로
-            </Link>
+            </button>
           )}
           <h1 className="mb-1 text-center text-2xl font-bold text-ink">
             프로젝트 생성

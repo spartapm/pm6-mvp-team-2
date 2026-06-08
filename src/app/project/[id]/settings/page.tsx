@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import BrandLogo from "@/components/BrandLogo";
 import Modal from "@/components/Modal";
 import {
   currentUser,
@@ -35,7 +36,7 @@ export default function SettingsPage({
     (async () => {
       const u = await currentUser();
       if (!u) {
-        router.replace("/");
+        router.replace("/login");
         return;
       }
       const list = await loadProjects(u.email);
@@ -102,17 +103,12 @@ export default function SettingsPage({
   return (
     <div className="flex min-h-screen flex-col bg-canvas">
       <header className="sticky top-0 z-30 flex h-14 items-center justify-between border-b border-line bg-white px-6">
-        <button
-          type="button"
-          onClick={() => router.push(`/project/${activeId}/dashboard`)}
-          className="text-base font-bold text-ink transition-colors hover:text-brand"
-          title="홈(대시보드)으로"
-        >
-          인수인계 태스크 관리
+        <button type="button" onClick={() => router.push(`/project/${activeId}/dashboard`)}>
+          <BrandLogo />
         </button>
         <button
           type="button"
-          onClick={() => router.push(`/project/${activeId}/tasks`)}
+          onClick={() => router.back()}
           className="rounded-lg border border-line px-4 py-1.5 text-sm font-medium text-ink-soft hover:bg-canvas"
         >
           나가기

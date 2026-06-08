@@ -110,7 +110,8 @@ export async function login(
   const { data, error } = await supabase
     .from("handovers")
     .select("*")
-    .ilike("email", email.trim())
+    // QA 기준: 이메일/코드 모두 대소문자까지 정확히 일치해야 로그인 가능
+    .eq("email", email.trim())
     .eq("code", code.trim())
     .maybeSingle();
   if (error || !data) return null;
@@ -291,6 +292,24 @@ export async function updateTask(
 
 export async function deleteTask(taskId: string) {
   await supabase.from("tasks").delete().eq("id", taskId);
+}
+
+// 같은 챕터(week) 내 태스크 순서 일괄 저장
+export async function reorderTasks(
+  projectId: string,
+  week: number,
+  orderedTaskIds: string[]
+) {
+  await Promise.all(
+    orderedTaskIds.map((id, index) =>
+      supabase
+        .from("tasks")
+        .update({ order_index: index })
+        .eq("id", id)
+        .eq("project_id", projectId)
+        .eq("week", week)
+    )
+  );
 }
 
 // ---------- 인수자 ----------

@@ -8,6 +8,7 @@ import {
   createTask,
   deleteTask,
   getTasks,
+  reorderTasks,
   updateTask,
 } from "@/lib/store";
 import { IMPORTANCE_META, WEEKS, weekLabel, type Task } from "@/lib/types";
@@ -24,6 +25,11 @@ export default function TasksPage({ params }: { params: { id: string } }) {
   const [form, setForm] = useState<FormState>({ mode: "closed" });
   const [toast, setToast] = useState<string | null>(null);
   const [confirmDelete, setConfirmDelete] = useState<Task | null>(null);
+  const [dragTaskId, setDragTaskId] = useState<string | null>(null);
+  const [confirmReorder, setConfirmReorder] = useState<{
+    week: number;
+    orderedTaskIds: string[];
+  } | null>(null);
 
   const refresh = async () => setTasks(await getTasks(projectId));
 
@@ -55,6 +61,29 @@ export default function TasksPage({ params }: { params: { id: string } }) {
     setForm({ mode: "closed" });
     await refresh();
     setToast("태스크가 삭제되었습니다.");
+  };
+
+  const moveTaskInWeek = (
+    weekTasks: Task[],
+    sourceId: string,
+    targetId: string
+  ): string[] => {
+    const ids = weekTasks.map((t) => t.id);
+    const from = ids.indexOf(sourceId);
+    const to = ids.indexOf(targetId);
+    if (from < 0 || to < 0 || from === to) return ids;
+    const next = [...ids];
+    const [moved] = next.splice(from, 1);
+    next.splice(to, 0, moved);
+    return next;
+  };
+
+  const handleConfirmReorder = async () => {
+    if (!confirmReorder) return;
+    await reorderTasks(projectId, confirmReorder.week, confirmReorder.orderedTaskIds);
+    setConfirmReorder(null);
+    await refresh();
+    setToast("순서가 변경되었습니다.");
   };
 
   return (
@@ -110,6 +139,16 @@ export default function TasksPage({ params }: { params: { id: string } }) {
                         return (
                           <li
                             key={t.id}
+                            draggable
+                            onDragStart={() => setDragTaskId(t.id)}
+                            onDragEnd={() => setDragTaskId(null)}
+                            onDragOver={(e) => e.preventDefault()}
+                            onDrop={() => {
+                              if (!dragTaskId || dragTaskId === t.id) return;
+                              const ordered = moveTaskInWeek(weekTasks, dragTaskId, t.id);
+                              setConfirmReorder({ week: w, orderedTaskIds: ordered });
+                              setDragTaskId(null);
+                            }}
                             className="flex items-center justify-between border-b border-line px-4 py-3 last:border-b-0 hover:bg-canvas"
                           >
                             <div className="flex min-w-0 items-center gap-3">
@@ -117,6 +156,12 @@ export default function TasksPage({ params }: { params: { id: string } }) {
                                 className={`h-2.5 w-2.5 flex-shrink-0 rounded-full ${meta.dot}`}
                                 title={`중요도: ${meta.label}`}
                               />
+                              <span
+                                className="cursor-grab text-xs text-ink-faint"
+                                title="드래그해서 순서 변경"
+                              >
+                                ↕
+                              </span>
                               <span className="truncate text-sm text-ink">
                                 {t.title}
                               </span>
@@ -170,6 +215,16 @@ export default function TasksPage({ params }: { params: { id: string } }) {
         cancelLabel="취소"
         onConfirm={handleDelete}
         onCancel={() => setConfirmDelete(null)}
+      />
+
+      <Modal
+        open={confirmReorder !== null}
+        title="태스크 순서 변경"
+        message="순서를 변경하시겠습니까?"
+        confirmLabel="예"
+        cancelLabel="아니오"
+        onConfirm={handleConfirmReorder}
+        onCancel={() => setConfirmReorder(null)}
       />
 
       {/* 저장/삭제 완료 토스트 */}
