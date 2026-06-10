@@ -55,7 +55,6 @@ export default function LoginPage() {
           <input
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder="ABCD1234@naver.com"
             className="mb-4 w-full rounded-lg border border-line px-3 py-2.5 text-sm outline-none focus:border-brand focus:ring-2 focus:ring-brand/20"
           />
 
@@ -65,7 +64,6 @@ export default function LoginPage() {
           <input
             value={code}
             onChange={(e) => setCode(e.target.value)}
-            placeholder="UXPMP0123"
             onKeyDown={(e) => e.key === "Enter" && handleLogin()}
             className="mb-6 w-full rounded-lg border border-line px-3 py-2.5 text-sm outline-none focus:border-brand focus:ring-2 focus:ring-brand/20"
           />

@@ -89,6 +89,7 @@ type QuestionRow = {
   id: string;
   project_id: string;
   week: number;
+  asker_name: string | null;
   title: string;
   content: string;
   created_at: string;
@@ -97,6 +98,7 @@ const mapQuestion = (r: QuestionRow): Question => ({
   id: r.id,
   projectId: r.project_id,
   week: r.week,
+  askerName: r.asker_name?.trim() || "인수자 사용자",
   title: r.title,
   content: r.content,
   createdAt: toMs(r.created_at),
@@ -382,6 +384,7 @@ export async function getQuestions(projectId: string): Promise<Question[]> {
 export async function createQuestion(
   projectId: string,
   week: number,
+  askerName: string,
   title: string,
   content: string
 ): Promise<Question | null> {
@@ -390,6 +393,7 @@ export async function createQuestion(
     .insert({
       project_id: projectId,
       week,
+      asker_name: askerName.trim() || "인수자 사용자",
       title: title.trim(),
       content: content.trim(),
     })

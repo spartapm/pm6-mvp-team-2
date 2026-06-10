@@ -71,7 +71,11 @@ export default function MembersPage({ params }: { params: { id: string } }) {
     "w-full rounded-md border border-line bg-white px-2 py-1.5 text-sm outline-none focus:border-brand";
 
   return (
-    <ProjectShell projectId={projectId} pageTitle="인수자 관리">
+    <ProjectShell
+      projectId={projectId}
+      pageTitle="인수자 관리"
+      contentMaxWidthClass="max-w-6xl"
+    >
       <div className="mb-3 flex justify-end gap-2">
         <button
           type="button"
@@ -100,18 +104,18 @@ export default function MembersPage({ params }: { params: { id: string } }) {
         </button>
       </div>
 
-      <div className="overflow-x-auto rounded-2xl border border-line bg-white shadow-card">
-        <table className="w-full min-w-[820px] border-collapse text-left">
+      <div className="rounded-2xl border border-line bg-white shadow-card">
+        <table className="w-full table-fixed border-collapse text-left">
           <thead>
             <tr className="border-b border-line bg-canvas text-xs text-ink-soft">
               <th className="w-10 px-3 py-3" />
-              <th className="px-3 py-3 font-medium">인수자 이름 *</th>
-              <th className="px-3 py-3 font-medium">인수자 이메일 *</th>
-              <th className="px-3 py-3 font-medium">직급</th>
-              <th className="px-3 py-3 font-medium">소속 부서</th>
-              <th className="px-3 py-3 font-medium">담당자</th>
-              <th className="px-3 py-3 font-medium">비고</th>
-              <th className="px-3 py-3 font-medium">생성일</th>
+              <th className="w-[14%] px-3 py-3 font-medium">인수자 이름 *</th>
+              <th className="w-[20%] px-3 py-3 font-medium">인수자 이메일 *</th>
+              <th className="w-[10%] px-3 py-3 font-medium">직급</th>
+              <th className="w-[14%] px-3 py-3 font-medium">소속 부서</th>
+              <th className="w-[10%] px-3 py-3 font-medium">담당자</th>
+              <th className="w-[18%] px-3 py-3 font-medium">비고</th>
+              <th className="w-[14%] px-3 py-3 font-medium">생성일</th>
             </tr>
           </thead>
           <tbody>

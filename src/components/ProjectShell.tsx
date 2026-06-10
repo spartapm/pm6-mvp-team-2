@@ -22,10 +22,12 @@ const NAV = [
 export default function ProjectShell({
   projectId,
   pageTitle,
+  contentMaxWidthClass = "max-w-3xl",
   children,
 }: {
   projectId: string;
   pageTitle: string;
+  contentMaxWidthClass?: string;
   children: React.ReactNode;
 }) {
   const router = useRouter();
@@ -182,7 +184,7 @@ export default function ProjectShell({
 
         {/* 콘텐츠 */}
         <main className="flex-1 px-8 py-6">
-          <div className="mx-auto max-w-3xl">
+          <div className={`mx-auto ${contentMaxWidthClass}`}>
             <h1 className="mb-6 text-xl font-bold text-ink">{pageTitle}</h1>
             {children}
           </div>

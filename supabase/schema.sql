@@ -55,10 +55,14 @@ create table if not exists public.questions (
   id         uuid primary key default gen_random_uuid(),
   project_id uuid not null references public.projects(id) on delete cascade,
   week       int  not null,
+  asker_name text not null default '인수자 사용자',
   title      text not null,
   content    text not null default '',
   created_at timestamptz not null default now()
 );
+
+alter table public.questions
+  add column if not exists asker_name text not null default '인수자 사용자';
 
 create index if not exists idx_projects_owner on public.projects(owner_email);
 create index if not exists idx_tasks_project on public.tasks(project_id);
@@ -132,13 +136,30 @@ insert into public.members (id, project_id, name, email, rank, dept, manager, no
 on conflict (id) do nothing;
 
 -- 데모 질문
-insert into public.questions (id, project_id, week, title, content, created_at) values
+insert into public.questions (id, project_id, week, asker_name, title, content, created_at) values
   ('c0000000-0000-0000-0000-000000000001', '11111111-1111-1111-1111-111111111111', 1,
+   '박인수',
    '그룹웨어 로그인이 계속 실패합니다. 어떻게 해야 하나요?',
    'IT팀 내선 2000으로 문의하시면 됩니다. 임시 비밀번호는 사번 + 생년월일 6자리입니다.',
    now() - interval '10 hours'),
   ('c0000000-0000-0000-0000-000000000002', '11111111-1111-1111-1111-111111111111', 2,
+   '최신입',
    '점심시간이 정확히 언제인가요? 유연하게 사용 가능한가요?',
    '12:00~13:00이 기본이며, 팀 일정에 맞춰 30분 단위로 조정 가능합니다.',
-   now() - interval '8 hours')
+   now() - interval '8 hours'),
+  ('c0000000-0000-0000-0000-000000000003', '11111111-1111-1111-1111-111111111111', 1,
+   '박인수',
+   '그룹웨어 접속 권한은 어디서 받나요?',
+   '입사 당일 IT팀이 일괄 부여합니다. 미반영 시 IT팀 내선 2000으로 요청해주세요.',
+   now() - interval '6 hours'),
+  ('c0000000-0000-0000-0000-000000000004', '11111111-1111-1111-1111-111111111111', 2,
+   '최신입',
+   '주간보고는 언제까지 올리면 되나요?',
+   '매주 금요일 17:00까지 팀 공유 드라이브 주간보고 폴더에 업로드하면 됩니다.',
+   now() - interval '4 hours'),
+  ('c0000000-0000-0000-0000-000000000005', '11111111-1111-1111-1111-111111111111', 2,
+   '박인수',
+   '고객 응대 템플릿은 어디에 있나요?',
+   '공용 드라이브 > 영업팀 > 템플릿 > 고객응대_표준양식에서 확인 가능합니다.',
+   now() - interval '2 hours')
 on conflict (id) do nothing;

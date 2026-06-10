@@ -47,6 +47,7 @@ export interface Question {
   id: string;
   projectId: string;
   week: number;
+  askerName: string;
   title: string;
   content: string;
   createdAt: number;

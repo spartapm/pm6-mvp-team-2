@@ -23,7 +23,6 @@ export default function NewProjectPage() {
         return;
       }
       setUser(u);
-      setDept(u.dept);
       setProjects(await getProjects(u.email));
     })();
   }, [router]);
@@ -82,7 +81,6 @@ export default function NewProjectPage() {
           <input
             value={name}
             onChange={(e) => setName(e.target.value)}
-            placeholder="신입 인수인계"
             className="mb-4 w-full rounded-lg border border-line px-3 py-2.5 text-sm outline-none focus:border-brand focus:ring-2 focus:ring-brand/20"
           />
 
@@ -92,7 +90,6 @@ export default function NewProjectPage() {
           <input
             value={dept}
             onChange={(e) => setDept(e.target.value)}
-            placeholder="영업"
             onKeyDown={(e) => e.key === "Enter" && handleCreate()}
             className="mb-6 w-full rounded-lg border border-line px-3 py-2.5 text-sm outline-none focus:border-brand focus:ring-2 focus:ring-brand/20"
           />

@@ -107,8 +107,8 @@ export default function QuestionsPage({
                     {answersById[q.id]?.trim() ? "답변 완료" : "미답변"}
                   </span>
                 </div>
-                <p className="line-clamp-2 whitespace-pre-line text-sm leading-relaxed text-ink-soft">
-                  {q.content}
+                <p className="text-sm text-ink-soft">
+                  질문자: <span className="font-medium text-ink">{q.askerName}</span>
                 </p>
               </button>
             </li>
@@ -119,14 +119,14 @@ export default function QuestionsPage({
       {selected && (
         <div className="mt-8 rounded-2xl border border-line bg-white p-5 shadow-card">
           <div className="mb-3 text-xs text-ink-faint">
-            질문자 <span className="ml-1 text-ink-soft">인수자 사용자</span>
+            질문자 <span className="ml-1 text-ink-soft">{selected.askerName}</span>
           </div>
 
           <label className="mb-1 block text-xs font-medium text-ink-soft">
             질문 내용
           </label>
           <div className="mb-4 rounded-lg bg-canvas px-3 py-2 text-sm text-ink-soft">
-            {selected.content}
+            {selected.title}
           </div>
 
           <label className="mb-1 block text-xs font-medium text-ink-soft">
