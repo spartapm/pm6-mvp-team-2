@@ -81,8 +81,8 @@ export default function ProjectShell({
   return (
     <div className="flex min-h-screen flex-col bg-canvas">
       {/* 헤더 (고정) */}
-      <header className="sticky top-0 z-30 grid h-14 grid-cols-[minmax(220px,360px)_1fr_auto] items-center border-b border-line bg-white px-6">
-        <div className="relative">
+      <header className="sticky top-0 z-30 flex h-14 items-center justify-between border-b border-line bg-white px-6 relative">
+        <div className="relative min-w-[220px] max-w-[360px] flex-1">
           <button
             type="button"
             onClick={() => setDropdownOpen((v) => !v)}
@@ -134,15 +134,19 @@ export default function ProjectShell({
           )}
         </div>
 
-        <div className="flex justify-center">
-          <Link href={`/project/${project.id}/dashboard`} title="홈(대시보드)으로">
+        <div className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+          <Link
+            href={`/project/${project.id}/dashboard`}
+            title="홈(대시보드)으로"
+            className="pointer-events-auto"
+          >
             <BrandLogo />
           </Link>
         </div>
 
         <button
           onClick={handleLogout}
-          className="text-sm font-medium text-ink-faint hover:text-ink"
+          className="ml-4 shrink-0 text-sm font-medium text-ink-faint hover:text-ink"
         >
           로그아웃
         </button>
